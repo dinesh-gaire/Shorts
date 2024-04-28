@@ -1,12 +1,34 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
+import { useFonts } from 'expo-font';
+import { ClerkProvider, SignedIn, SignedOut } from "@clerk/clerk-expo";
+import LoginScreen from './Apps/Screens/LoginScreen/LoginScreen';
+import HomeScreen from './Apps/Screens/Home/HomeScreen';
+import { NavigationContainer } from '@react-navigation/native';
+import TabNavigation from './Apps/Navigations/TabNavigation';
 
 export default function App() {
+
+  const [fontsLoaded, fontError] = useFonts({
+    'outfit': require('./assets/fonts/Outfit-Regular.ttf'),
+    'outfit-bold': require('./assets/fonts/Outfit-Bold.ttf'),
+    'outfit-medium': require('./assets/fonts/Outfit-Medium.ttf'),
+  });
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <ClerkProvider publishableKey={process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY}>
+        <View style={styles.container}>
+          <SignedIn>
+            <NavigationContainer>
+              <TabNavigation/>
+            </NavigationContainer>
+          </SignedIn>
+          <SignedOut>
+              <LoginScreen/>  
+          </SignedOut>
+        </View>
+    </ClerkProvider>
+    
   );
 }
 
@@ -14,7 +36,5 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 });
